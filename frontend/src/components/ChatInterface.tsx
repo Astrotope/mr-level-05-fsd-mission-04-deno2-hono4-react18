@@ -34,7 +34,7 @@ export function ChatInterface() {
       
       // Parse the response if it's a string
       const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-      const messageContent = parsedResponse?.response?.response || 'No response received';
+      const messageContent = parsedResponse?.response || 'No response received';
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -61,7 +61,7 @@ export function ChatInterface() {
       const parsedRecommendations = typeof response === 'string' ? JSON.parse(response) : response;
       
       // Get the actual recommendations text from the nested structure
-      const recommendationsContent = parsedRecommendations?.recommendations?.recommendations || 'No recommendations received';
+      const recommendationsContent = parsedRecommendations?.recommendations || 'No recommendations received';
       
       setRecommendations(recommendationsContent);
       setIsOpen(true);
@@ -73,10 +73,10 @@ export function ChatInterface() {
   };
 
   return (
-    <>
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="space-y-4 mb-4 h-96 overflow-y-auto">
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="w-full">
+          <div className="space-y-4 mb-4 h-[calc(100vh-400px)] overflow-y-auto">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -179,6 +179,6 @@ export function ChatInterface() {
           </div>
         </Dialog>
       </Transition>
-    </>
+    </div>
   );
 }

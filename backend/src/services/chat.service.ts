@@ -13,7 +13,7 @@ class ChatService {
 
   constructor() {
     this.genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
-    this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" });
+    this.model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     this.chat = this.model.startChat({
       history: [
         {

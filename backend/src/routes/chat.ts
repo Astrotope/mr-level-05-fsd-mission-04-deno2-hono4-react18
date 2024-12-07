@@ -11,7 +11,7 @@ chat.post("/v1/start", async (c) => {
     }
 
     const response = await chatService.startChat(message);
-    return c.json({ response });
+    return c.json(response);
   } catch (error) {
     console.error('Error in start chat endpoint:', error);
     return c.json({ error: "Internal server error" }, 500);
@@ -26,7 +26,7 @@ chat.post("/v1/continue", async (c) => {
     }
 
     const response = await chatService.continueChat(history, message);
-    return c.json({ response });
+    return c.json(response);
   } catch (error) {
     console.error('Error in continue chat endpoint:', error);
     return c.json({ error: "Internal server error" }, 500);
@@ -41,7 +41,7 @@ chat.post("/v1/recommend", async (c) => {
     }
 
     const recommendations = await chatService.getRecommendations(context);
-    return c.json({ recommendations });
+    return c.json(recommendations);
   } catch (error) {
     console.error('Error in recommendations endpoint:', error);
     return c.json({ error: "Internal server error" }, 500);
