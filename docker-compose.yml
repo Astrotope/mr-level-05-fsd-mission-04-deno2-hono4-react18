@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
-      - NODE_ENV=development
+      - DENO_ENV=development
     env_file:
       - ./backend/.env
     volumes:
@@ -17,6 +17,24 @@ services:
       - /app/node_modules
     networks:
       - app-network
+    profiles:
+      - development
+
+  backend-prod:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DENO_ENV=production
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+    profiles:
+      - production
 
   frontend:
     build:
@@ -26,6 +44,7 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_URL=http://localhost:8000
+      - NODE_ENV=development
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -33,6 +52,24 @@ services:
       - backend
     networks:
       - app-network
+    profiles:
+      - development
+
+  frontend-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - NODE_ENV=production
+    depends_on:
+      - backend-prod
+    networks:
+      - app-network
+    profiles:
+      - production
 
 networks:
   app-network:
