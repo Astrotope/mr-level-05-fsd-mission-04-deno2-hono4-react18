@@ -1,9 +1,9 @@
-FROM denoland/deno:1.39.1
+FROM denoland/deno:2.0.0
 
 WORKDIR /app
 
 # Cache the dependencies
-COPY deno.json .
+COPY deno.json deno.lock ./
 RUN deno cache --lock=deno.lock deno.json
 
 # Copy source code
