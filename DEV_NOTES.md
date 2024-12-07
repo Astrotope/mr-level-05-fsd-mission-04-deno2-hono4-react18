@@ -6,8 +6,10 @@ A full-stack chat application built with Deno and React, featuring Google's Gemi
 ## Technology Stack
 
 ### Backend
-- **Runtime**: Deno 2.0.0
-- **Framework**: Hono v4.0.0
+- **Runtime**: Deno 2.1.1
+- **Framework**: Hono v4.1.2
+- **JS Runtime**: V8 13.0.245.12-rusty
+- **TypeScript**: 5.6.2
 - **AI Integration**: Google Generative AI (Gemini-1.5-flash)
 - **Environment**: Configurable via `.env`
 - **Standard Library**: Deno std@0.220.0
@@ -149,6 +151,19 @@ The backend uses Deno's built-in testing framework. Tests are located in the `ba
 cd backend
 deno task test
 ```
+
+```bash
+deno task test                                                                                                                                                                                        ─╯
+Task test deno test --allow-net --allow-read --allow-env
+Check file:///[path]/mission_ready/level-05/mission-05/research/deno-2-hono-react-nextjs/backend/tests/chat.test.ts
+running 3 tests from ./tests/chat.test.ts
+Chat API - /v1/start - should require message ... ok (5ms)
+Chat API - /v1/continue - should require history and message ... ok (0ms)
+Chat API - /v1/recommend - should require context ... ok (0ms)
+
+ok | 3 passed | 0 failed (11ms)
+```
+
 
 #### Test Structure
 - **API Tests** (`chat.test.ts`):
