@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-net --allow-read --allow-env --watch src/index.ts",
+    "test": "deno test --allow-net --allow-read --allow-env",
+    "start": "deno run --allow-net --allow-read --allow-env src/index.ts"
+  },
+  "imports": {
+    "hono": "https://deno.land/x/hono@v3.2.6/mod.ts",
+    "hono/middleware": "https://deno.land/x/hono@v3.2.6/middleware.ts",
+    "@google/generative-ai": "npm:@google/generative-ai@^0.1.3"
+  }
+}
