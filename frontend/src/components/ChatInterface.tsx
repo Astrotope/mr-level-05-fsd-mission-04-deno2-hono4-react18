@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -12,6 +12,9 @@ export function ChatInterface() {
   const [recommendations, setRecommendations] = useState('');
   const [messageType, setMessageType] = useState<'greeting' | 'question' | 'recommendation' | 'farewell' | null>(null);
   const [isConversationEnded, setIsConversationEnded] = useState(false);
+  
+  // Add ref for the messages container
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Start the chat when component mounts
   useEffect(() => {
@@ -35,6 +38,11 @@ export function ChatInterface() {
 
     startChat();
   }, []);
+
+  // Scroll to bottom whenever messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,8 +81,10 @@ export function ChatInterface() {
         console.log('Received farewell, ending conversation');
         setIsConversationEnded(true);
       } else if (response.messageType === 'recommendation') {
-        setRecommendations(response.response);
+        console.log('Received recommendation, showing modal');
+        setRecommendations(response.response); 
         setIsOpen(true);
+        setIsConversationEnded(true);
       }
     } catch (error) {
       console.error('Error in chat:', error);
@@ -95,6 +105,7 @@ export function ChatInterface() {
     setMessageType(null);
     setRecommendations('');
     setInput('');
+    setIsOpen(false);
     try {
       const response = await chatApi.startChat('');
       setMessageType(response.messageType || null);
@@ -103,7 +114,7 @@ export function ChatInterface() {
       console.error('Error starting new chat:', error);
       const errorMessage: ChatMessage = {
         role: 'model',
-        parts: 'Sorry, there was an error starting the new chat. Please try again.',
+        parts: 'Sorry, there was an error starting a new chat. Please refresh the page.',
       };
       setMessages([errorMessage]);
     } finally {
@@ -116,59 +127,78 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col min-h-[90vh] max-w-2xl mx-auto p-4">
-      <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+    
+    <div className="flex flex-col h-[calc(100vh-12rem)] max-w-2xl mx-auto p-4 pt-0">
+
+      {/* Chat messages container */}
+      <div className="flex-1 overflow-y-auto mb-4 space-y-4 p-4 bg-white rounded-lg shadow-sm">
         {messages.map((message, index) => (
           <div
             key={index}
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
+            {message.role === 'model' && (
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                <span className="text-blue-600 font-semibold">T</span>
+              </div>
+            )}
             <div
               className={`max-w-sm rounded-lg p-4 ${
                 message.role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-900'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-800 border border-gray-200'
               }`}
             >
-              <ReactMarkdown>{message.parts}</ReactMarkdown>
+              <ReactMarkdown className="prose prose-sm">{message.parts}</ReactMarkdown>
             </div>
+            {message.role === 'user' && (
+              <div className="w-8 h-8 p-4 rounded-full bg-blue-100 flex items-center justify-center ml-2">
+                <span className="text-blue-600 font-semibold">U</span>
+              </div>
+            )}
           </div>
         ))}
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-200 text-gray-900 rounded-lg p-4">
+          <div className="flex justify-start items-center">
+            <div className="w-8 h-8 p-4 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+              <span className="text-blue-600 font-semibold">T</span>
+            </div>
+            <div className="bg-gray-100 text-gray-800 rounded-lg p-4 border border-gray-200">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200" />
               </div>
             </div>
           </div>
         )}
+        {/* Add div ref for scrolling */}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex space-x-2">
+      {/* Input area */}
+      <div className="p-4 bg-white rounded-lg shadow-sm border-t border-gray-100 h-[6rem]">
         {isConversationEnded ? (
           <button
             onClick={startNewChat}
-            className="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
           >
             Start New Chat
           </button>
         ) : (
-          <form onSubmit={handleSubmit} className="flex-1 flex space-x-2">
+          <form onSubmit={handleSubmit} className="flex-1 flex space-x-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
             >
               Send
             </button>
