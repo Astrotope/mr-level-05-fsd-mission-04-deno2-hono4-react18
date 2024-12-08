@@ -10,31 +10,40 @@ const api = axios.create({
 });
 
 export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
+  role: 'user' | 'model';
+  parts: string;
 }
 
 interface ChatResponse {
   response: string;
+  messageType?: 'greeting' | 'question' | 'recommendation' | 'farewell';
+  history: ChatMessage[];
 }
 
 interface RecommendationResponse {
   recommendations: string;
+  history: ChatMessage[];
 }
 
 export const chatApi = {
   startChat: async (message: string): Promise<ChatResponse> => {
+    console.log('API startChat called with:', message);
     const response = await api.post('/chat/v1/start', { message });
+    console.log('API startChat response:', response.data);
     return response.data;
   },
 
-  continueChat: async (history: ChatMessage[], message: string): Promise<ChatResponse> => {
-    const response = await api.post('/chat/v1/continue', { history, message });
+  continueChat: async (message: string, history: ChatMessage[]): Promise<ChatResponse> => {
+    console.log('API continueChat called with:', { message, history });
+    const response = await api.post('/chat/v1/continue', { message, history });
+    console.log('API continueChat response:', response.data);
     return response.data;
   },
 
-  getRecommendations: async (context: string): Promise<RecommendationResponse> => {
-    const response = await api.post('/chat/v1/recommend', { context });
+  getRecommendations: async (context: string, history: ChatMessage[] = []): Promise<RecommendationResponse> => {
+    console.log('API getRecommendations called with:', { context, history });
+    const response = await api.post('/chat/v1/recommend', { context, history });
+    console.log('API getRecommendations response:', response.data);
     return response.data;
   },
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -10,124 +10,174 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [recommendations, setRecommendations] = useState('');
+  const [messageType, setMessageType] = useState<'greeting' | 'question' | 'recommendation' | 'farewell' | null>(null);
+  const [isConversationEnded, setIsConversationEnded] = useState(false);
+
+  // Start the chat when component mounts
+  useEffect(() => {
+    const startChat = async () => {
+      setIsLoading(true);
+      try {
+        const response = await chatApi.startChat('');
+        setMessageType(response.messageType || null);
+        setMessages(response.history);
+      } catch (error) {
+        console.error('Error starting chat:', error);
+        const errorMessage: ChatMessage = {
+          role: 'model',
+          parts: 'Sorry, there was an error starting the chat. Please refresh the page.',
+        };
+        setMessages([errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    startChat();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || isConversationEnded) return;
 
     const userMessage: ChatMessage = {
       role: 'user',
-      content: input,
+      parts: input.trim(),
     };
 
+    console.log('Sending message:', userMessage);
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     try {
       let response;
-      if (messages.length === 0) {
-        response = await chatApi.startChat(userMessage.content);
+      // Only use continueChat if we're past the greeting and opt-in stage
+      if (messages.length <= 1 || messageType === 'greeting') {
+        console.log('Starting chat with:', userMessage.parts);
+        response = await chatApi.startChat(userMessage.parts);
       } else {
-        response = await chatApi.continueChat(messages, userMessage.content);
+        console.log('Continuing chat with:', userMessage.parts);
+        console.log('Current history:', messages);
+        response = await chatApi.continueChat(userMessage.parts, messages);
       }
-      
-      // Parse the response if it's a string
-      const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-      const messageContent = parsedResponse?.response || 'No response received';
 
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: messageContent,
-      };
+      console.log('Received response:', response);
+      console.log('Message type:', response.messageType);
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessageType(response.messageType || null);
+      setMessages(response.history);
+
+      // Handle different message types
+      if (response.messageType === 'farewell') {
+        console.log('Received farewell, ending conversation');
+        setIsConversationEnded(true);
+      } else if (response.messageType === 'recommendation') {
+        setRecommendations(response.response);
+        setIsOpen(true);
+      }
     } catch (error) {
       console.error('Error in chat:', error);
+      const errorMessage: ChatMessage = {
+        role: 'model',
+        parts: 'Sorry, there was an error processing your request. Please try again.',
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGetRecommendations = async () => {
-    if (isLoading || messages.length === 0) return;
-
+  const startNewChat = async () => {
+    setMessages([]); // Reset messages before starting new chat
+    setIsConversationEnded(false);
     setIsLoading(true);
+    setMessageType(null);
+    setRecommendations('');
+    setInput('');
     try {
-      const context = messages.map(m => `${m.role}: ${m.content}`).join('\n');
-      const response = await chatApi.getRecommendations(context);
-      
-      // Parse the response if it's a string
-      const parsedRecommendations = typeof response === 'string' ? JSON.parse(response) : response;
-      
-      // Get the actual recommendations text from the nested structure
-      const recommendationsContent = parsedRecommendations?.recommendations || 'No recommendations received';
-      
-      setRecommendations(recommendationsContent);
-      setIsOpen(true);
+      const response = await chatApi.startChat('');
+      setMessageType(response.messageType || null);
+      setMessages(response.history);
     } catch (error) {
-      console.error('Error getting recommendations:', error);
+      console.error('Error starting new chat:', error);
+      const errorMessage: ChatMessage = {
+        role: 'model',
+        parts: 'Sorry, there was an error starting the new chat. Please try again.',
+      };
+      setMessages([errorMessage]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="w-full">
-          <div className="space-y-4 mb-4 h-[calc(100vh-400px)] overflow-y-auto">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg ${
-                  message.role === 'user'
-                    ? 'bg-blue-100 ml-auto max-w-[80%]'
-                    : 'bg-gray-100 mr-auto max-w-[80%]'
-                }`}
-              >
-                <p className="text-sm text-gray-800">{message.content}</p>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              </div>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              >
-                Send
-              </button>
-            </div>
-          </form>
-
-          <button
-            onClick={handleGetRecommendations}
-            disabled={isLoading || messages.length === 0}
-            className="mt-4 w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+    <div className="flex flex-col min-h-[90vh] max-w-2xl mx-auto p-4">
+      <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            Get Recommendations
+            <div
+              className={`max-w-sm rounded-lg p-4 ${
+                message.role === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-900'
+              }`}
+            >
+              <ReactMarkdown>{message.parts}</ReactMarkdown>
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-200 text-gray-900 rounded-lg p-4">
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100" />
+                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex space-x-2">
+        {isConversationEnded ? (
+          <button
+            onClick={startNewChat}
+            className="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Start New Chat
           </button>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex-1 flex space-x-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400"
+            >
+              Send
+            </button>
+          </form>
+        )}
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -156,19 +206,19 @@ export function ChatInterface() {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Recommendations
+                    Insurance Recommendations
                   </Dialog.Title>
                   <div className="mt-2">
-                    <div className="prose text-sm text-gray-500">
-                      <ReactMarkdown>{recommendations}</ReactMarkdown>
-                    </div>
+                    <ReactMarkdown className="text-sm text-gray-500">
+                      {recommendations}
+                    </ReactMarkdown>
                   </div>
 
                   <div className="mt-4">
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => setIsOpen(false)}
+                      onClick={closeModal}
                     >
                       Got it, thanks!
                     </button>

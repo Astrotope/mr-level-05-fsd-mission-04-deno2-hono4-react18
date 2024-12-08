@@ -5,12 +5,11 @@ const chat = new Hono();
 
 chat.post("/v1/start", async (c) => {
   try {
-    const { message } = await c.req.json();
-    if (!message) {
-      return c.json({ error: "Message is required" }, 400);
-    }
+    const body = await c.req.json();
+    const message = body.message ?? "";
+    const history = body.history ?? [];
 
-    const response = await chatService.startChat(message);
+    const response = await chatService.startChat(message, history);
     return c.json(response);
   } catch (error) {
     console.error('Error in start chat endpoint:', error);
@@ -25,7 +24,7 @@ chat.post("/v1/continue", async (c) => {
       return c.json({ error: "History and message are required" }, 400);
     }
 
-    const response = await chatService.continueChat(history, message);
+    const response = await chatService.continueChat(message, history);
     return c.json(response);
   } catch (error) {
     console.error('Error in continue chat endpoint:', error);
@@ -35,12 +34,12 @@ chat.post("/v1/continue", async (c) => {
 
 chat.post("/v1/recommend", async (c) => {
   try {
-    const { context } = await c.req.json();
+    const { context, history = [] } = await c.req.json();
     if (!context) {
       return c.json({ error: "Context is required" }, 400);
     }
 
-    const recommendations = await chatService.getRecommendations(context);
+    const recommendations = await chatService.getRecommendations(context, history);
     return c.json(recommendations);
   } catch (error) {
     console.error('Error in recommendations endpoint:', error);

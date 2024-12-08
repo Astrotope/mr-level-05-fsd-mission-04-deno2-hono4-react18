@@ -206,3 +206,19 @@ Currently, the frontend does not have automated tests implemented. This is an ar
 - Add integration tests
 - Add end-to-end testing with Cypress or Playwright
 - Implement continuous integration with automated testing
+
+
+## Business Logic - AI Insurance Chat Assistant
+
+```text
+Is it a truck?
+├── YES → [3RDP]
+└── NO
+    └── Is it a racing car?
+        ├── YES → [3RDP]
+        └── NO
+            └── Is it over 10 years old?
+                ├── YES → [MBI, 3RDP]
+                └── NO → [MBI, CCI]
+```
+
