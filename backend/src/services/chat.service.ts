@@ -13,6 +13,7 @@ export interface InsuranceRecommendation {
   hasEnoughInfo: boolean;
   policyRecommendation: "MBI" | "CCI" | "3RDP" | "NULL";
   policyRecommendations: ("MBI" | "CCI" | "3RDP")[];
+  carAgeStatus: "CONFIRMED_OLD" | "CONFIRMED_NEW" | "UNKNOWN";
 }
 
 interface GenerativeContent {
@@ -271,14 +272,15 @@ ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
       console.log('Analysis result:', analysisResult);
 
       // Convert the new format to the old format for compatibility
-      // but include the array of recommendations
+      // but include the array of recommendations and carAgeStatus
       return {
         hasTruck: analysisResult.truckStatus === "CONFIRMED_YES",
         hasRacingCar: analysisResult.racingCarStatus === "CONFIRMED_YES",
         hasOldCar: analysisResult.carAgeStatus === "CONFIRMED_OLD",
         hasEnoughInfo: analysisResult.hasEnoughInfo,
         policyRecommendation: analysisResult.policyRecommendations[0] || "NULL", // Keep first recommendation for backward compatibility
-        policyRecommendations: analysisResult.policyRecommendations // Add array of all recommendations
+        policyRecommendations: analysisResult.policyRecommendations, // Add array of all recommendations
+        carAgeStatus: analysisResult.carAgeStatus // Add the raw carAgeStatus
       };
     } catch (error) {
       console.error('Error analyzing conversation:', error);
@@ -288,7 +290,8 @@ ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
         hasOldCar: false,
         hasEnoughInfo: false,
         policyRecommendation: "NULL",
-        policyRecommendations: []
+        policyRecommendations: [],
+        carAgeStatus: "UNKNOWN"
       };
     }
   }
@@ -300,11 +303,24 @@ ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
       "3RDP": "Third Party Car Insurance (3RDP)"
     };
 
-    const vehicleDescription = [
-      recommendation.hasTruck ? "you have a truck" : "you don't have a truck",
-      recommendation.hasRacingCar ? "you have a racing car" : "you don't have a racing car",
-      recommendation.hasOldCar ? "your vehicle is more than 10 years old" : "your vehicle is 10 years old or newer"
-    ].join(", and ");
+    const vehicleDescription = (() => {
+      const parts = [
+        recommendation.hasTruck ? "you have a truck" : "you don't have a truck",
+        recommendation.hasRacingCar ? "you have a racing car" : "you don't have a racing car"
+      ];
+      
+      // Only include age description if we have a regular car (not truck or racing car)
+      if (!recommendation.hasTruck && !recommendation.hasRacingCar) {
+        if (recommendation.carAgeStatus === "CONFIRMED_OLD") {
+          parts.push("your vehicle is more than 10 years old");
+        } else if (recommendation.carAgeStatus === "CONFIRMED_NEW") {
+          parts.push("your vehicle is 10 years old or newer");
+        }
+        // Don't add age description if UNKNOWN
+      }
+      
+      return parts.join(", and ");
+    })();
 
     // Generate recommendation message based on available policies
     const policies = recommendation.policyRecommendations;

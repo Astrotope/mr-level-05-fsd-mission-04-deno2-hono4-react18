@@ -1,0 +1,35 @@
+{
+  "scriptId": "319",
+  "url": "file:///Users/cmcewing/Documents/mission_ready/level-05/mission-05/research/deno-2-hono-react-nextjs/backend/src/routes/chat.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1518, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 136, "endOffset": 525, "count": 5 },
+        { "startOffset": 227, "endOffset": 232, "count": 1 },
+        { "startOffset": 375, "endOffset": 523, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 554, "endOffset": 1010, "count": 2 },
+        { "startOffset": 645, "endOffset": 656, "count": 1 },
+        { "startOffset": 658, "endOffset": 857, "count": 1 },
+        { "startOffset": 857, "endOffset": 1008, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 1040, "endOffset": 1498, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

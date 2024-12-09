@@ -1,0 +1,109 @@
+{
+  "scriptId": "320",
+  "url": "file:///Users/cmcewing/Documents/mission_ready/level-05/mission-05/research/deno-2-hono-react-nextjs/backend/src/services/chat.service.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 14339, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 1697, "endOffset": 1711, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ChatService",
+      "ranges": [{ "startOffset": 1715, "endOffset": 2056, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "checkOptIn",
+      "ranges": [
+        { "startOffset": 2059, "endOffset": 3484, "count": 4 },
+        { "startOffset": 3385, "endOffset": 3480, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "startChat",
+      "ranges": [
+        { "startOffset": 3487, "endOffset": 5411, "count": 5 },
+        { "startOffset": 3558, "endOffset": 3861, "count": 1 },
+        { "startOffset": 3861, "endOffset": 4014, "count": 4 },
+        { "startOffset": 4016, "endOffset": 4150, "count": 4 },
+        { "startOffset": 4150, "endOffset": 4224, "count": 0 },
+        { "startOffset": 4224, "endOffset": 4521, "count": 4 },
+        { "startOffset": 4521, "endOffset": 5315, "count": 2 },
+        { "startOffset": 5315, "endOffset": 5407, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "formatHistoryForModel",
+      "ranges": [{ "startOffset": 5414, "endOffset": 5597, "count": 15 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 5470, "endOffset": 5591, "count": 41 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "analyzeConversation",
+      "ranges": [
+        { "startOffset": 5600, "endOffset": 10015, "count": 28 },
+        { "startOffset": 9593, "endOffset": 9602, "count": 15 },
+        { "startOffset": 9723, "endOffset": 10011, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 8856, "endOffset": 8890, "count": 123 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "generateRecommendation",
+      "ranges": [
+        { "startOffset": 10018, "endOffset": 11121, "count": 8 },
+        { "startOffset": 10313, "endOffset": 10333, "count": 2 },
+        { "startOffset": 10334, "endOffset": 10360, "count": 6 },
+        { "startOffset": 10396, "endOffset": 10421, "count": 1 },
+        { "startOffset": 10422, "endOffset": 10453, "count": 7 },
+        { "startOffset": 10486, "endOffset": 10528, "count": 1 },
+        { "startOffset": 10529, "endOffset": 10570, "count": 7 },
+        { "startOffset": 10750, "endOffset": 10842, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 10879, "endOffset": 10898, "count": 13 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "continueChat",
+      "ranges": [
+        { "startOffset": 11124, "endOffset": 12797, "count": 22 },
+        { "startOffset": 11502, "endOffset": 11918, "count": 7 },
+        { "startOffset": 11918, "endOffset": 12699, "count": 15 },
+        { "startOffset": 12699, "endOffset": 12793, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "extractAssistantResponse",
+      "ranges": [
+        { "startOffset": 12800, "endOffset": 13287, "count": 15 },
+        { "startOffset": 12930, "endOffset": 13224, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getRecommendations",
+      "ranges": [{ "startOffset": 13290, "endOffset": 14290, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

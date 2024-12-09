@@ -1,0 +1,121 @@
+{
+  "scriptId": "316",
+  "url": "file:///Users/cmcewing/Documents/mission_ready/level-05/mission-05/research/deno-2-hono-react-nextjs/backend/tests/chat.test.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 10517, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 476, "endOffset": 742, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 819, "endOffset": 1185, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [
+        { "startOffset": 1318, "endOffset": 2182, "count": 1 },
+        { "startOffset": 1998, "endOffset": 2049, "count": 0 },
+        { "startOffset": 2050, "endOffset": 2103, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 2128, "endOffset": 2176, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 2313, "endOffset": 3059, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 3005, "endOffset": 3053, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 3201, "endOffset": 3976, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 3922, "endOffset": 3970, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [
+        { "startOffset": 4109, "endOffset": 5460, "count": 1 },
+        { "startOffset": 5319, "endOffset": 5381, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "Request.method",
+      "ranges": [{ "startOffset": 4594, "endOffset": 4642, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 5406, "endOffset": 5454, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "simulateConversation",
+      "ranges": [
+        { "startOffset": 5561, "endOffset": 6106, "count": 6 },
+        { "startOffset": 5660, "endOffset": 6015, "count": 21 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 5961, "endOffset": 6009, "count": 21 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 6036, "endOffset": 6084, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 6214, "endOffset": 6644, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 6765, "endOffset": 7293, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 7425, "endOffset": 8053, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 8185, "endOffset": 8812, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 8931, "endOffset": 9560, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 9722, "endOffset": 10462, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

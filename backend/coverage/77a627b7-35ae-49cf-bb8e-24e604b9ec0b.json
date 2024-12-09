@@ -1,0 +1,16 @@
+{
+  "scriptId": "357",
+  "url": "file:///Users/cmcewing/Documents/mission_ready/level-05/mission-05/research/deno-2-hono-react-nextjs/backend/src/config/env.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 0, "endOffset": 257, "count": 1 },
+        { "startOffset": 135, "endOffset": 142, "count": 0 },
+        { "startOffset": 193, "endOffset": 198, "count": 0 },
+        { "startOffset": 237, "endOffset": 253, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

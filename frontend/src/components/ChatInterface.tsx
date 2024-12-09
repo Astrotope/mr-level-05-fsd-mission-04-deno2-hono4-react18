@@ -165,9 +165,15 @@ export function ChatInterface() {
             </div>
             <div className="bg-gray-100 text-gray-800 rounded-lg p-4 border border-gray-200">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200" />
+              <div className="relative h-2 animate-bounce">
+                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" />
+                </div>
+                <div className="relative h-2 animate-bounce delay-100">
+                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100" />
+                </div>
+                <div className="relative h-2 animate-bounce delay-200">
+                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200" />
+                </div>
               </div>
             </div>
           </div>

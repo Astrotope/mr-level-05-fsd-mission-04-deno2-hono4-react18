@@ -4,7 +4,7 @@ import { chat } from "../src/routes/chat.ts";
 import { chatService, type ChatMessage } from "../src/services/chat.service.ts";
 
 // Configuration
-const RATE_LIMIT_DELAY = 5000; // 15 requests per minute limit
+const RATE_LIMIT_DELAY = 6000; // 15 requests per minute limit
 
 const testApp = new Hono();
 testApp.route("/chat", chat);
