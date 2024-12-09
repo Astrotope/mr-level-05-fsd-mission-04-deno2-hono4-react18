@@ -1,0 +1,6 @@
+.env
+node_modules/
+backend/coverage/
+coverage/
+./src/.env
+
