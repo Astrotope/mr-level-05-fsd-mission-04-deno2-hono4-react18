@@ -14,7 +14,6 @@ export interface InsuranceRecommendation {
   policyRecommendation: "MBI" | "CCI" | "3RDP" | "NULL";
   policyRecommendations: ("MBI" | "CCI" | "3RDP")[];
   carAgeStatus: "CONFIRMED_OLD" | "CONFIRMED_NEW" | "UNKNOWN";
-  nextQuestion: string;
 }
 
 interface GenerativeContent {
@@ -76,19 +75,19 @@ Decision Tree:
 2. Information Gathering Paths:
    A. If truck status unclear:
       - Ask if it's a truck
-      - Get clear yes/no confirmation
+      - Get clear yes/no confirmation - don't deduce an answer - get a clear yes/no confirmation
    
    B. If racing car status unclear:
       - Ask if it's a racing car
-      - Get clear yes/no confirmation
+      - Get clear yes/no confirmation - don't deduce an answer - get a clear yes/no confirmation
    
    C. If age unclear:
       - Ask if vehicle is over 10 years old
-      - Get clear yes/no confirmation
+      - Get clear yes/no confirmation - don't deduce an answer - get a clear yes/no confirmation
 
 Remember to:
 1. Be professional and friendly while staying enthusiastic about cars
-2. Start with what the user tells you - don't ask about trucks if they've already mentioned a regular car - don't ask about age if they've already mentioned it's age, unless to clarify amibguity
+2. Start with what the user tells you - don't ask about trucks if they've already mentioned a regular car
 3. Focus on gathering information, not making recommendations
 4. Ask one clear question at a time
 5. Get explicit confirmation for each piece of information
@@ -115,6 +114,26 @@ export class ChatService {
       },
       systemInstruction: SYSTEM_INSTRUCTIONS
     });
+  }
+
+  private async retryWithExponentialBackoff<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 5
+  ): Promise<T> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        
+        const delay = Math.pow(2, attempt + 1) * 1000; // 2, 4, 8, 16, 32 seconds
+        console.log(`Attempt ${attempt + 1} failed, retrying in ${delay/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error("Max retries exceeded");
   }
 
   private async checkOptIn(userResponse: string, history: ChatMessage[]): Promise<boolean> {
@@ -149,12 +168,16 @@ Response: "${userResponse}"
 Return true if the response indicates agreement (e.g., "yes", "sure", "okay", "cheers", "great", "yeah", "cool", "yep", "sure thing", "definitely", "of course", "absolutely", "indeed", "totally", "yeah", "yep", "yeh", "I would like that", "yo", "please help")
 Return false if the response indicates disagreement or uncertainty (e.g., "no", "not now", "maybe later", "nah", "nope", "not really", "no way", "nope", "some other time", "not really")`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const { optIn } = JSON.parse(response.text());
+      const result = await this.retryWithExponentialBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const { optIn } = JSON.parse(await response.text());
+        
+        console.log('Opt-in result:', optIn);
+        return optIn;
+      });
       
-      console.log('Opt-in result:', optIn);
-      return optIn;
+      return result;
     } catch (error) {
       console.error('Error checking opt-in:', error);
       return false;
@@ -264,14 +287,9 @@ Return false if the response indicates disagreement or uncertainty (e.g., "no", 
               type: SchemaType.STRING,
               enum: ["MBI", "CCI", "3RDP"]
             }
-          },
-          nextQuestion: {
-            type: SchemaType.STRING,
-            description: "The next question we should ask to clarify any ambiguity",
-            nullable: true
           }
         },
-        required: ["truckStatus", "racingCarStatus", "carAgeStatus", "hasEnoughInfo", "policyRecommendations", "nextQuestion"]
+        required: ["truckStatus", "racingCarStatus", "carAgeStatus", "hasEnoughInfo", "policyRecommendations"]
       };
 
       const systemInstructions = `You are an analytical component of Tina, the AI insurance consultant. Your role is to carefully analyze conversations to determine what is definitively known about a customer's vehicle.
@@ -283,11 +301,14 @@ Key Analysis Rules:
    - Look for clear yes/no responses to direct questions
 
 2. Vehicle Classification:
+   - Initial value should be UNKNOWN
    - Trucks must be explicitly confirmed
    - Racing cars must be explicitly confirmed
    - Regular cars need age confirmation
+   - Any ambiguity should be UNKNOWN
 
 3. Age Classification:
+   - Initial value should be UNKNOWN
    - Must have clear indication of > 10 years for CONFIRMED_OLD
    - Must have clear indication of ≤ 10 years for CONFIRMED_NEW
    - Any ambiguity should be UNKNOWN
@@ -311,7 +332,7 @@ Example Questions for Ambiguity:
 
       // Create a separate model instance for structured output
       const model = this.genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemini-1.5-pro",
         generationConfig: {
           temperature: 0,
           responseMimeType: "application/json",
@@ -334,9 +355,11 @@ If there is ANY ambiguity about vehicle type or age, provide a specific question
 Conversation History:
 ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const analysisResult = JSON.parse(await response.text());
+      const analysisResult = await this.retryWithExponentialBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        return JSON.parse(await response.text());
+      });
       
       console.log('Analysis result:', analysisResult);
 
@@ -347,8 +370,7 @@ ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
         hasEnoughInfo: analysisResult.hasEnoughInfo,
         policyRecommendation: analysisResult.policyRecommendations[0] || "NULL",
         policyRecommendations: analysisResult.policyRecommendations,
-        carAgeStatus: analysisResult.carAgeStatus,
-        nextQuestion: analysisResult.nextQuestion
+        carAgeStatus: analysisResult.carAgeStatus
       };
     } catch (error) {
       console.error('Error analyzing conversation:', error);
@@ -359,8 +381,7 @@ ${history.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}`;
         hasEnoughInfo: false,
         policyRecommendation: "NULL",
         policyRecommendations: [],
-        carAgeStatus: "UNKNOWN",
-        nextQuestion: "Could you tell me about your vehicle?"
+        carAgeStatus: "UNKNOWN"
       };
     }
   }
@@ -463,9 +484,13 @@ Key Points:
 - Keep descriptions very high-level
 - Use markdown for formatting`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      return await response.text();
+      const result = await this.retryWithExponentialBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        return await response.text();
+      });
+      
+      return result;
     } catch (error) {
       console.error('Error generating recommendation:', error);
       throw error;
@@ -495,25 +520,29 @@ Key Points:
       // If we don't have enough info, continue the conversation
       const formattedHistory = this.formatHistoryForModel(updatedHistory);
       
-      const result = await this.model.generateContent({
-        contents: formattedHistory,
-        generationConfig: {
-          temperature: 0.1,
-          maxOutputTokens: 200,
-          topP: 1,
-          topK: 1
-        }
+      const result = await this.retryWithExponentialBackoff(async () => {
+        const result = await this.model.generateContent({
+          contents: formattedHistory,
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 200,
+            topP: 1,
+            topK: 1
+          }
+        });
+
+        const response = await result.response;
+        const text = await response.text();
+        const assistantResponse = this.extractAssistantResponse(text);
+        
+        return { 
+          response: assistantResponse,
+          history: [...updatedHistory, { role: 'model', parts: assistantResponse }],
+          messageType: 'question'
+        };
       });
 
-      const response = await result.response;
-      const text = await response.text();
-      const assistantResponse = this.extractAssistantResponse(text);
-      
-      return { 
-        response: assistantResponse,
-        history: [...updatedHistory, { role: 'model', parts: assistantResponse }],
-        messageType: 'question'
-      };
+      return result;
     } catch (error) {
       console.error('Error continuing chat:', error);
       throw error;
