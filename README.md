@@ -6,6 +6,22 @@ This project implements an AI-powered insurance recommendation chatbot named Tin
 
 It is a full-stack chat application that provides a modern, responsive interface for users to interact with an AI assistant.
 
+### Chatbot Architecture - High Level
+
+![image](https://github.com/user-attachments/assets/04ee5e6b-ba0e-4baf-b526-595db2cd924d)
+
+### Chatbot Technology Stack
+
+![image](https://github.com/user-attachments/assets/8d2486f3-c816-40aa-a4a9-bb6cd10ea7d6)
+
+### Chatbot UI
+
+![image](https://github.com/user-attachments/assets/8cbbc473-03d9-4547-9ea3-f0b00787f1f8)
+
+### Chatbot Policy Recommendaiton
+
+![image](https://github.com/user-attachments/assets/304288f0-e8b5-4ee2-a331-d02ef43f4139)
+
 ## Technology Stack
 
 ### Backend
