@@ -25,6 +25,26 @@ It is a full-stack chat application that provides a modern, responsive interface
 - **HTTP Client**: Axios
 - **Markdown Rendering**: React Markdown
 
+## Gemini Model Fine-tuning
+
+- The Gemini model was fine-tuned to sound more like Tina, and behave like an AI insurance policy assistant.
+- The fine tuned model was not used in the end due to the followin limitations
+  - Fine-tuned models cannot not be used with system instructions, which is an important feature required for this application.
+  - Fine-tuned models cannot produce structured JSON output.
+  - Fine-tuned models cannot be tuned on multi-turn conversational data, only on q&a datasets. Multi-turn training is not available in the Gemini SDK but appears to be available in the Vertex AI SDK.
+- In the end I opted for detailed systems instructions over fine-tuning.
+- Future ideas.
+  - To effectivelly fine the Gemini model we would need to...
+    - Generate synthetic data of 100's of multi-turn coversations with Tina, that model the behaviors we require.
+    - Train it using the Vertex AI SDK
+    - Ideally use system instructions as well, as these keep the system prompt out of the chat history. I need to research if this is possible with Vertex AI.
+
+[Gemini Fine Tuning Notes](FINE_TUNING_GEMINI_NOTES.md)
+
+### Gemini Training - Loss curve from the tuning results. The loss curve shows how much the model's predictions deviate from the ideal outputs.
+
+![image](https://github.com/user-attachments/assets/03360ee8-06a0-44b6-9d20-50392f9fbf90)
+
 ## Getting Started
 
 ### Running with Docker Compose
