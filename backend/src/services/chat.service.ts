@@ -309,9 +309,18 @@ Key Analysis Rules:
 
 3. Age Classification:
    - Initial value should be UNKNOWN
-   - Must have clear indication of > 10 years for CONFIRMED_OLD
-   - Must have clear indication of ≤ 10 years for CONFIRMED_NEW
+   - Must have clear indication of greater than 10 years for CONFIRMED_OLD
+   - Must have clear indication of 10 years old or less for CONFIRMED_NEW
+   - CONFIRMED_OLD: Vehicle must be explicitly stated as being MORE than 10 years old (10+ years)
+   - CONFIRMED_NEW: Vehicle must be explicitly stated as being 10 years old OR YOUNGER (0-10 years)
+   - Examples:
+     * "11 years old" → CONFIRMED_OLD
+     * "10 years old" → CONFIRMED_NEW
+     * "9 years old" → CONFIRMED_NEW
+     * "about 10 years" → UNKNOWN (ambiguous)
+     * "quite old" → UNKNOWN (not specific enough)
    - Any ambiguity should be UNKNOWN
+   - If age is given as a year (e.g. "2015 model") → UNKNOWN (ambiguous as not reference date is given for current year)
 
 4. Information Sufficiency:
    - Only set hasEnoughInfo = true if ALL required information is confirmed
@@ -332,7 +341,7 @@ Example Questions for Ambiguity:
 
       // Create a separate model instance for structured output
       const model = this.genAI.getGenerativeModel({ 
-        model: "gemini-1.5-pro",
+        model: "gemini-1.5-flash",
         generationConfig: {
           temperature: 0,
           responseMimeType: "application/json",
