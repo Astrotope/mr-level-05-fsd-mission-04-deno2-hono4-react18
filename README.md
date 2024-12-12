@@ -25,6 +25,10 @@ It is a full-stack chat application that provides a modern, responsive interface
 - **HTTP Client**: Axios
 - **Markdown Rendering**: React Markdown
 
+## Passing Integration Test Run with Deno Test Runner and Hono
+
+[Deno Insurance Assistant ChatBot-Gemini Integration Test](DENO_TESTS.md)
+
 ## Gemini Model Fine-tuning
 
 - The Gemini model was fine-tuned to sound more like Tina, and behave like an AI insurance policy assistant.
