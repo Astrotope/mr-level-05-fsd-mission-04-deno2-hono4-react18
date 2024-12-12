@@ -75,6 +75,10 @@ deno task test
 
 ![image](https://github.com/user-attachments/assets/03360ee8-06a0-44b6-9d20-50392f9fbf90)
 
+### Some Simple Tests of the Trained Model
+
+![image](https://github.com/user-attachments/assets/ffad509f-79c9-48ae-8da6-1da6b7be00b6)
+
 ## Getting Started
 
 ### Running with Docker Compose
