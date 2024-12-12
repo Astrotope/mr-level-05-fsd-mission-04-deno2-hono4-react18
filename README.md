@@ -167,12 +167,6 @@ flowchart TD
     E -->|YES| F[MBI, 3RDP]
     E -->|NO| G[MBI, CCI]
 
-    %% Styling
-    classDef question fill:#f9f,stroke:#333,stroke-width:2px
-    classDef answer fill:#bbf,stroke:#333,stroke-width:2px
-    
-    class A,C,E question
-    class B,D,F,G answer
 ```
 
 
@@ -213,9 +207,6 @@ sequenceDiagram
     Gemini->>Backend: Response
     Backend->>Frontend: Recommendation
     Frontend->>User: Display
-
-    %% Styling
-
 ```
 
 ## Interaction Flow - Flow Chart
@@ -248,22 +239,6 @@ flowchart TD
     K --> |CLICK| N[Reset Chat]
     N --> B
     
-    %% Styling
-    classDef process fill:#e1f5fe,stroke:#01579b
-    classDef decision fill:#34CCD3,stroke:#ff6f00
-    classDef terminal fill:#e8f5e9,stroke:#1b5e20
-    classDef bot fill:#e8f509,stroke:#1b5e20
-    classDef user fill:#8CD334,stroke:#1b5e20
-    classDef scripted_message fill:#E83A7D,stroke:#1b5e20
-    classDef ai_message fill:#E8784C,stroke:#1b5e20
-
-    class A,D terminal
-    class B,J process
-    class C,F,K decision
-    class M,I,G,E bot
-    class L,H user
-    class B,D scripted_message
-    class J,O ai_message
 ```
 
 ## Key Features
