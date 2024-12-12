@@ -27,7 +27,17 @@ It is a full-stack chat application that provides a modern, responsive interface
 
 ## Passing Integration Test Run with Deno Test Runner and Hono
 
+### Deno Test Runner
+
+```bash
+cd backend/
+deno task test
+```
+
+### Deno Test Runner Output
+
 [Deno Insurance Assistant ChatBot-Gemini Integration Test](DENO_TESTS.md)
+
 
 ## Gemini Model Fine-tuning
 
