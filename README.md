@@ -16,7 +16,7 @@ It is a full-stack chat application that provides a modern, responsive interface
 
 ### Chatbot UI
 
-![image](https://github.com/user-attachments/assets/8cbbc473-03d9-4547-9ea3-f0b00787f1f8)
+![image](https://github.com/user-attachments/assets/251bb0c8-509d-40b1-bed8-29f01d93f42e)
 
 ### Chatbot Policy Recommendaiton
 
