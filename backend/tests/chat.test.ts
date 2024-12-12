@@ -93,9 +93,7 @@ Deno.test({
     assertEquals(startRes.status, 200);
     assertExists(startData.response);
     assertEquals(typeof startData.response, "string");
-    // Response should be a farewell message
-    assert(startData.response.toLowerCase().includes("thank you") && 
-           startData.response.toLowerCase().includes("bye"));
+    assertEquals(startData.messageType, "farewell");
     await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
   },
   sanitizeResources: false,
@@ -103,7 +101,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Chat API - Ambiguous response should be treated as non-opt-in",
+  name: "Chat API - Ambiguous response should be interpreted by Gemini",
   async fn() {
     const startReq = new Request("http://localhost/chat/v1/start", {
       method: "POST",
@@ -111,7 +109,7 @@ Deno.test({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: "Not sure about this yet"
+        message: "I might be interested"
       }),
     });
 
@@ -121,9 +119,73 @@ Deno.test({
     assertEquals(startRes.status, 200);
     assertExists(startData.response);
     assertEquals(typeof startData.response, "string");
-    // Response should be a farewell message since ambiguous is treated as non-opt-in
-    assert(startData.response.toLowerCase().includes("thank you") && 
-           startData.response.toLowerCase().includes("bye"));
+    assertExists(startData.messageType);
+    assert(
+      startData.messageType === 'greeting' || 
+      startData.messageType === 'question' || 
+      startData.messageType === 'farewell'
+    );
+    await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
+  },
+  sanitizeResources: false,
+  sanitizeOps: false,
+});
+
+Deno.test({
+  name: "Chat API - Should handle positive-leaning ambiguous responses",
+  async fn() {
+    const startReq = new Request("http://localhost/chat/v1/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "I guess that would be helpful"
+      }),
+    });
+
+    const startRes = await testApp.fetch(startReq);
+    const startData = await startRes.json();
+
+    assertEquals(startRes.status, 200);
+    assertExists(startData.response);
+    assertEquals(typeof startData.response, "string");
+    assertExists(startData.messageType);
+    // Should proceed with questions since response is positive-leaning
+    assertEquals(startData.messageType, "question");
+    assert(
+      startData.response.toLowerCase().includes("vehicle") || 
+      startData.response.toLowerCase().includes("car") || 
+      startData.response.toLowerCase().includes("truck")
+    );
+    await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
+  },
+  sanitizeResources: false,
+  sanitizeOps: false,
+});
+
+Deno.test({
+  name: "Chat API - Should handle negative-leaning ambiguous responses",
+  async fn() {
+    const startReq = new Request("http://localhost/chat/v1/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "Not really sure about this"
+      }),
+    });
+
+    const startRes = await testApp.fetch(startReq);
+    const startData = await startRes.json();
+
+    assertEquals(startRes.status, 200);
+    assertExists(startData.response);
+    assertEquals(typeof startData.response, "string");
+    assertExists(startData.messageType);
+    // Should end with farewell since response is negative-leaning
+    assertEquals(startData.messageType, "farewell");
     await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
   },
   sanitizeResources: false,
@@ -149,6 +211,12 @@ Deno.test({
     
     assertEquals(startRes.status, 200);
     assertExists(startData.history);
+    assertEquals(startData.messageType, "question");
+    assert(
+      startData.response.toLowerCase().includes("vehicle") || 
+      startData.response.toLowerCase().includes("car") || 
+      startData.response.toLowerCase().includes("truck")
+    );
     await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
 
     // Continue conversation
@@ -169,9 +237,14 @@ Deno.test({
     assertEquals(continueRes.status, 200);
     assertExists(continueData.response);
     assertEquals(typeof continueData.response, "string");
-    // Response should be about truck insurance
-    assert(continueData.response.toLowerCase().includes("3rdp") || 
-           continueData.response.toLowerCase().includes("third party"));
+    assertEquals(continueData.messageType, "question");
+    // Response should ask for confirmation about truck
+    assert(
+      continueData.response.toLowerCase().includes("truck") &&
+      (continueData.response.toLowerCase().includes("confirm") ||
+       continueData.response.toLowerCase().includes("definitely") ||
+       continueData.response.toLowerCase().includes("sure"))
+    );
     await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
   },
   sanitizeResources: false,
