@@ -16,6 +16,7 @@ The training data is stored in `training_data.json` and follows this format:
 
 ### Dataset Characteristics
 - **Size**: 344 conversation pairs - Sythetically generated using GPT-4o
+- [ChatGPT - Data Generation Conversation](https://chatgpt.com/share/675808bc-1034-800d-9115-3b2690c40262)
 - **Format**: JSON
 - **Language Style**: Casual, enthusiastic, car-focused
 - **Coverage**:
