@@ -15,7 +15,7 @@ The training data is stored in `training_data.json` and follows this format:
 ```
 
 ### Dataset Characteristics
-- **Size**: 344 conversation pairs - Sythetically generated using GPT-4o
+- **Size**: 388 conversation pairs - Sythetically generated using GPT-4o
 - [ChatGPT - Data Generation Conversation](https://chatgpt.com/share/675808bc-1034-800d-9115-3b2690c40262)
 - **Format**: JSON
 - **Language Style**: Casual, enthusiastic, car-focused
@@ -47,3 +47,12 @@ The training data is stored in `training_data.json` and follows this format:
 ## Training Notebook
 
 The training process is documented in `train_gemin_02.ipynb` and includes:
+
+## Google AI Studio Training
+
+I also tuned the model through Google AI Studio (for practice) 
+- You have to conver the JSONL to CSV for this.
+- I used this Colab notebook to do the conversion [Delete Models / Convert JSONL to CSV Notebook](https://colab.research.google.com/drive/1FL6W-iUHIP_rcNz4CEju1IUUpUhULe0y?usp=sharing)
+
+![image](https://github.com/user-attachments/assets/18571bfd-5cfb-4c96-b821-24735f10d706)
+
