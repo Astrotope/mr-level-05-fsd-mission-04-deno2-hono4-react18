@@ -4,3 +4,98 @@ backend/coverage/
 coverage/
 ./src/.env
 
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Deno
+.deno/
+*.orig
+*.pyc
+*.swp
+
+# Testing
+coverage/
+.nyc_output/
+
+# Production
+build/
+dist/
+out/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Misc
+.DS_Store
+*.pem
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Project specific
+gemini_training/model/
+gemini_training/checkpoints/
+I've created a comprehensive .gitignore file that includes:
+
+Development Dependencies
+
