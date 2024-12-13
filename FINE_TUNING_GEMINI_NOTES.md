@@ -47,13 +47,3 @@ The training data is stored in `training_data.json` and follows this format:
 ## Training Notebook
 
 The training process is documented in `train_gemin_02.ipynb` and includes:
-
-### Setup and Configuration
-```python
-# Key configurations
-MODEL_NAME = "gemini-1.5-flash"
-TEMPERATURE = 0.1
-MAX_OUTPUT_TOKENS = 200
-TOP_P = 1
-TOP_K = 1
-```
